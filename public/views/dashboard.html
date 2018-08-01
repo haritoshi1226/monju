@@ -1,0 +1,211 @@
+<style>
+    .sidebar {
+        position: fixed;
+        top: 60px;
+        bottom: 0;
+        left: 0;
+        display: block;
+        overflow-x: hidden;
+        overflow-y: auto
+    }
+
+    .maincontainer{
+        position: fixed;
+        top: 60px;
+        bottom: 0;
+        right: 0;
+        display: block;
+        overflow-x: hidden;
+        overflow-y: auto
+    }
+
+</style>
+
+<div ng-controller="DashboardController" type="text/ng-template">
+
+<nav class="navbar navbar-inverse navbar-fixed-top" style="height:60px;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <img src="images/Monju_logo_name.png" height="35">
+            </a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li>{{ email }} | <a href="#">ログアウト</a></li>
+        </ul>
+    </div>
+</nav>
+<div class=".container-fluid">
+    <div class="row">
+        <div class="sidebar col-xs-6 col-sm-3 col-md-2" style="background-color:gray;">
+            <div class="dropdown">
+                <button type="submit" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="/images/add-button.png" width="30">
+                </button>
+                <ul class="dropdown-menu multi-level" aria-labelledby="dropdownMenu">
+                    <a class="dropdown-item" data-toggle="modal" data-target="#articleModal">記事</a>
+                    <a class="dropdown-item" data-toggle="modal" data-target="#bookModal">本</a>
+                    <a class="dropdown-item" data-toggle="modal" data-target="#paperModal">論文</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" data-toggle="modal" data-target="#tagModal">タグ</a>
+                </ul>
+            </div>
+
+            <div id="dashboard-button">
+                dashboard
+            </div>
+            <div id="tag-list">
+                ALL-Tags
+                <ul>
+                    <p>機械学習</p>
+                </ul>
+            </div>
+
+        </div>
+        <div class="maincontainer col-xs-6 col-sm-9 col-md-10" style="right:0px;">
+            main contents
+            <div ui-view></div>
+        </div>
+    </div>
+</div>
+
+<!--記事の登録モーダル-->
+<div class="modal fade" id="articleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">記事の登録</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="url" placeholder="https://www.sample.com" ng-model="article_url">
+                    </div>
+                    <button type="submit" class="btn btn-success" ng-click="add('article')">search</button>
+                </form>
+                <hr>
+                <div ng-repeat="article in articles">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <img ng-src="{{article.favicon}}">
+                        </div>
+                        <div class="col-md-8">
+                            {{article.title}}
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="close" ng-click="delete_article($index)">&times;</button>
+                            <button class="btn btn-primary" ng-click="registrate('article',$index)">登録</button>
+                        </div>
+                    </div>
+                    <!--<p style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">-->
+                        <!--<button type="button" class="close">&times;</button>-->
+                        <!--<img ng-src="{{article.favicon}}">-->
+                        <!--{{article.title}}-->
+                    <!--</p>-->
+                    <hr>
+                </div>
+            </div>
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>-->
+                <!--<button type="button" class="btn btn-primary">登録</button>-->
+            <!--</div>&lt;!&ndash; /.modal-footer &ndash;&gt;-->
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<!--本の登録モーダル-->
+<div class="modal fade" id="bookModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">本の登録</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="query" placeholder="https://www.sample.com" ng-model="book_query">
+                    </div>
+                    <button type="submit" class="btn btn-success" ng-click="book_search()">search</button>
+                </form>
+                <hr>
+                <div ng-repeat="book in books">
+                    <div class="row">
+                        <div class="col-md-4 ">
+                            <img ng-src="{{book.img}}">
+                        </div>
+                        <div class="col-md-8">
+                            <b>{{book.title}}</b><br>
+                            {{book.authors}}<br>
+                            出版日：{{book.publishedDate}}<br>
+                            <button class="btn btn-primary" ng-click="registrate('book',$index)">登録</button>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>-->
+                <!--<button type="button" class="btn btn-primary">登録</button>-->
+            <!--</div>&lt;!&ndash; /.modal-footer &ndash;&gt;-->
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<!--論文の登録モーダル-->
+<div class="modal fade" id="paperModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">論文の登録</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>モーダルのコンテンツ文。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                <button type="button" class="btn btn-primary">登録</button>
+            </div><!-- /.modal-footer -->
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<!--タグの登録モーダル-->
+<div class="modal fade" id="tagModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">タグの登録</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>モーダルのコンテンツ文。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                <button type="button" class="btn btn-primary">登録</button>
+            </div><!-- /.modal-footer -->
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+    $(window).ready(monju.appOnReady);
+</script>
+</div>
